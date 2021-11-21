@@ -63,6 +63,8 @@ namespace Eval {
   bool useNNUE;
   string currentEvalFileName = "None";
 
+  bool useSimple;
+
   /// NNUE::init() tries to load a NNUE network at startup time, or when the engine
   /// receives a UCI command "setoption name EvalFile value nn-[a-z0-9]{12}.nnue"
   /// The name of the NNUE network is always retrieved from the EvalFile option.
@@ -74,6 +76,8 @@ namespace Eval {
   void NNUE::init() {
 
     useNNUE = Options["Use NNUE"];
+    useSimple = Options["Use simple"];
+    std::cout << "Eval Config: useNNUE=" << useNNUE << ", useSimple=" << useSimple << std::endl;
     if (!useNNUE)
         return;
 
@@ -1085,7 +1089,12 @@ Value Eval::evaluate(const Position& pos) {
 
   // Deciding between classical and NNUE eval: for high PSQ imbalance we use classical,
   // but we switch to NNUE during long shuffling or with high material on the board.
-
+  
+  if (useSimple) {
+      v = Value(pos.simple_eval());
+      return v;
+  }
+  
   if (  !useNNUE
       || abs(eg_value(pos.psq_score())) * 5 > (850 + pos.non_pawn_material() / 64) * (5 + pos.rule50_count()))
       v = Evaluation<NO_TRACE>(pos).value();          // classical

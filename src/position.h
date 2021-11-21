@@ -174,6 +174,8 @@ public:
   void put_piece(Piece pc, Square s);
   void remove_piece(Square s);
 
+  int simple_eval() const;
+
 private:
   // Initialization helpers (used while setting up a position)
   void set_castling_right(Color c, Square rfrom);
@@ -413,6 +415,17 @@ inline StateInfo* Position::state() const {
 
   return st;
 }
+
+inline int Position::simple_eval() const {
+  int v = (9 * pieceCount[W_QUEEN] + 5 * pieceCount[W_ROOK] + 3 * pieceCount[W_BISHOP] + 3 * pieceCount[W_KNIGHT] + 1 * pieceCount[W_PAWN])
+        - (9 * pieceCount[B_QUEEN] + 5 * pieceCount[B_ROOK] + 3 * pieceCount[B_BISHOP] + 3 * pieceCount[B_KNIGHT] + 1 * pieceCount[B_PAWN]);
+  if (sideToMove == WHITE) {
+    return v;
+  } else {
+    return -v;
+  }
+}
+
 
 } // namespace Stockfish
 
