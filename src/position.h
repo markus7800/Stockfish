@@ -171,13 +171,16 @@ public:
   // Used by NNUE
   StateInfo* state() const;
 
+  void set_side_to_move(Color c);
   void put_piece(Piece pc, Square s);
   void remove_piece(Square s);
+  void set_thread(Thread* th);
+  void overwrite_state(StateInfo* si);
+  void set_state(StateInfo* si) const;
 
 private:
   // Initialization helpers (used while setting up a position)
   void set_castling_right(Color c, Square rfrom);
-  void set_state(StateInfo* si) const;
   void set_check_info(StateInfo* si) const;
 
   // Other helpers
@@ -369,6 +372,18 @@ inline Piece Position::captured_piece() const {
 
 inline Thread* Position::this_thread() const {
   return thisThread;
+}
+
+inline void Position::set_thread(Thread* th) {
+  thisThread = th;
+}
+
+inline void Position::overwrite_state(StateInfo* si) {
+  st = si;
+}
+
+inline void Position::set_side_to_move(Color c) {
+  sideToMove = c;
 }
 
 inline void Position::put_piece(Piece pc, Square s) {
